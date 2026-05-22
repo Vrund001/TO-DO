@@ -6,7 +6,7 @@ passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.NODE_ENV === 'production' 
-    ? `${process.env.BACKEND_URL || 'https://todo-backend-app-skml.onrender.com'}/api/auth/google/callback`
+    ? `${process.env.BACKEND_URL || 'https://to-do-m0we.onrender.com'}/api/auth/google/callback`
     : `http://localhost:${process.env.PORT || 5500}/api/auth/google/callback`
 }, async (accessToken, refreshToken, profile, done) => {
   try {

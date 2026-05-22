@@ -19,6 +19,7 @@ app.use(sanitizeInput);
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:5173',
+    'https://stupendous-nougat-5e23b1.netlify.app',
     'https://dulcet-custard-82202d.netlify.app',
     'https://tubular-concha-16bda1.netlify.app',
     'https://multiuser-todo.vercel.app',
