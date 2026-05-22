@@ -13,6 +13,8 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+
 // Helper function to generate JWT
 const generateToken = (user) => {
   const tokenPayload = { id: user.id };
@@ -60,11 +62,11 @@ router.get('/google/callback',
   (req, res, next) => {
     passport.authenticate('google', {
       session: false,
-      failureRedirect: `${process.env.FRONTEND_URL}/login?error=oauth_failed`
+      failureRedirect: `${FRONTEND_URL}/login?error=oauth_failed`
     })(req, res, (err) => {
       if (err) {
         console.error('🔥 Passport authentication error:', err);
-        return res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth_failed`);
+        return res.redirect(`${FRONTEND_URL}/login?error=oauth_failed`);
       }
       next();
     });
@@ -75,7 +77,7 @@ router.get('/google/callback',
 
       if (!user) {
         console.error(' No user returned from Google OAuth');
-        return res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth_failed`);
+        return res.redirect(`${FRONTEND_URL}/login?error=oauth_failed`);
       }
 
       console.log('🔍 Google callback - User data:', {
@@ -100,7 +102,7 @@ router.get('/google/callback',
         );
 
         // Redirect to role selection page
-        const redirectUrl = `${process.env.FRONTEND_URL}/select-role?token=${tempToken}`;
+        const redirectUrl = `${FRONTEND_URL}/select-role?token=${tempToken}`;
         console.log('🔗 Redirect URL:', redirectUrl);
         res.redirect(redirectUrl);
       } else {
@@ -112,25 +114,25 @@ router.get('/google/callback',
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
           );
-          return res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${tempToken}&status=pending`);
+          return res.redirect(`${FRONTEND_URL}/auth/callback?token=${tempToken}&status=pending`);
         }
         
         if (user.account_status === 'rejected') {
-          return res.redirect(`${process.env.FRONTEND_URL}/login?error=account_rejected`);
+          return res.redirect(`${FRONTEND_URL}/login?error=account_rejected`);
         }
         
         if (user.account_status === 'active') {
           console.log('✅ Existing user with active account - normal login');
           const loginData = await handleLoginSuccess(user, res);
-          const redirectUrl = `${process.env.FRONTEND_URL}/auth/callback?token=${loginData.token}`;
+          const redirectUrl = `${FRONTEND_URL}/auth/callback?token=${loginData.token}`;
           res.redirect(redirectUrl);
         } else {
-          return res.redirect(`${process.env.FRONTEND_URL}/login?error=account_inactive`);
+          return res.redirect(`${FRONTEND_URL}/login?error=account_inactive`);
         }
       }
     } catch (error) {
       console.error('💥 Google callback error:', error);
-      res.redirect(`${process.env.FRONTEND_URL}/login?error=login_failed`);
+      res.redirect(`${FRONTEND_URL}/login?error=login_failed`);
     }
   }
 );
